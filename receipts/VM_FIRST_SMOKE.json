@@ -1,0 +1,78 @@
+{
+  "kind": "codex_harness_correctness_benchmark_run.v1",
+  "generated_at": "2026-05-12T19:43:33.804Z",
+  "benchmark": "Codex Harness Correctness Benchmark",
+  "task_source": "tasks/default.json",
+  "modes": [
+    "harness"
+  ],
+  "model": "gpt-5.4-mini",
+  "codex_bin": "codex",
+  "metric": "admitted_correct_patch_rate = visible_before_failed && codex_completed && visible_after_passed && hidden_probe_passed && scoped_diff && no_test_tamper && rollback/evidence/claim_boundary present",
+  "rows": [
+    {
+      "task_id": "normalize_repeated_spaces",
+      "mode": "harness",
+      "vm_snapshot_hash": "58d475cdb7244f43d2f6f2b183138e1941ae65be650ff5e49568fe3a3295e4a6",
+      "materialization_hash": "0e7b78d808089ceb670996cff2a2a2fa215dbc6bb09dc6296b25b4eedece7eea",
+      "generated_files": [
+        {
+          "path": "strings.py",
+          "content_hash": "ed04827ee18a1ef34f2fa4655223ab46a4486b70707984befdd9476897e2c5fe",
+          "bytes": 76
+        },
+        {
+          "path": "test_strings.py",
+          "content_hash": "befb935eeacc1326ada542eacba96afef0f6b0d4772ae35a191a8b25656dfd48",
+          "bytes": 364
+        }
+      ],
+      "repo": "(deleted)",
+      "allowed_files": [
+        "strings.py"
+      ],
+      "changed_files": [
+        "strings.py"
+      ],
+      "forbidden_changed_files": [],
+      "admission": "canary",
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": true,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "timings_ms": {
+        "visible_before": 49,
+        "proposer": 23313,
+        "visible_after": 59,
+        "hidden": 24
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_repeated_inner_space (test_strings.StringTests.test_repeated_inner_space)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-06d8sR/test_strings.py\", line 9, in test_repeated_inner_space\n    self.assertEqual(normalize_name('Grace   Hopper'), 'grace-hopper')\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'grace---hopper' != 'grace-hopper'\n- grace---hopper\n?      --\n+ grace-hopper\n\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/strings.py b/strings.py\nindex a66a07e..7631955 100644\n--- a/strings.py\n+++ b/strings.py\n@@ -1,2 +1,2 @@\n def normalize_name(name):\n-    return name.strip().lower().replace(' ', '-')\n+    return '-'.join(name.split()).lower()\n",
+      "codex_output_tail": "Changed files:\n- [/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-06d8sR/strings.py](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-06d8sR/strings.py)\n\nTest result:\n- `python3 -m unittest -q` passed\n- `Ran 2 tests in 0.000s`\n- `OK`\n\nRollback instruction:\n- Revert the single-line change in `strings.py` from `'-'.join(name.split()).lower()` back to the prior implementation if you need to undo it.\n\nClaim boundary:\n- This patch is only validated against the visible unit tests in this harness. It establishes correct collapsing of repeated whitespace for `normalize_name`, but it does not prove behavior for hidden probes beyond that contract.\n"
+    }
+  ],
+  "summary": {
+    "harness": {
+      "task_count": 1,
+      "canary_count": 1,
+      "admitted_correct_patch_rate": 1,
+      "visible_pass_rate": 1,
+      "hidden_pass_rate": 1,
+      "scoped_diff_rate": 1,
+      "test_tamper_rate": 0
+    }
+  },
+  "wall_ms": 23518,
+  "claim_boundary": "Local batch benchmark over disposable repos. This is harness evidence, not SWE-bench performance or production reliability.",
+  "next": "Scale task count and add fanout modes under the same admission gate.",
+  "receipt_hash": "e9fcc4020087e005dfde326f02c77a93750a1cb7036ef17ed4fb7fce17563e07"
+}

@@ -5,6 +5,7 @@ const os = require("os");
 const path = require("path");
 const cp = require("child_process");
 const crypto = require("crypto");
+const { createVm } = require("./vm");
 
 function parseArgs(argv) {
   const args = {
@@ -91,14 +92,19 @@ function readTasks(file, limit) {
 
 function setupRepo(task) {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), `codex-harness-${task.id}-`));
+  const vm = createVm(`task:${task.id}`);
   for (const [name, body] of Object.entries(task.files || {})) {
-    const target = path.join(repo, name);
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, body);
+    vm.write(name, body);
   }
+  const materialized = vm.materialize(repo);
   sh("git init -q", { cwd: repo });
   sh('git add . && git commit -q -m initial --author "Bench <bench@example.com>"', { cwd: repo });
-  return repo;
+  return {
+    repo,
+    vm_snapshot_hash: materialized.snapshot_hash,
+    materialization_hash: materialized.materialization_hash,
+    generated_files: materialized.files,
+  };
 }
 
 function promptFor(task, mode) {
@@ -163,7 +169,8 @@ function gateRow(task, before, propose, after, hidden, changed, forbidden) {
 }
 
 function runOne(task, mode, args) {
-  const repo = setupRepo(task);
+  const setup = setupRepo(task);
+  const repo = setup.repo;
   const visibleProbe = task.visible_probe || "python3 -m unittest -q";
   const before = sh(visibleProbe, { cwd: repo });
   const propose = runCodex(repo, task, mode, args);
@@ -179,6 +186,9 @@ function runOne(task, mode, args) {
   const row = {
     task_id: task.id,
     mode,
+    vm_snapshot_hash: setup.vm_snapshot_hash,
+    materialization_hash: setup.materialization_hash,
+    generated_files: setup.generated_files,
     repo: args.keepRepos ? repo : "(deleted)",
     allowed_files: allowed,
     changed_files: changed,

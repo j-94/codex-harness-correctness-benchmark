@@ -12,7 +12,9 @@ The benchmark is not a claim that Codex broadly solves SWE-bench. It is a batcha
 
 ```text
 task packet
--> disposable repo
+-> VM overlay
+-> VM snapshot hash
+-> materialized disposable repo
 -> Codex proposer
 -> visible probe
 -> held-out probe
@@ -48,7 +50,7 @@ node scripts/main.js \
   --out receipts/local-run.json
 ```
 
-The runner creates disposable repos in your temp directory, asks Codex to patch each one, runs visible and hidden probes, gates the result, and writes a receipt.
+The runner generates task files in an in-process VM overlay, materializes that VM snapshot to a disposable repo in your temp directory, asks Codex to patch it, runs visible and hidden probes, gates the result, and writes a receipt.
 
 ## Main Entrypoint
 
@@ -93,6 +95,14 @@ tests pass
 + scoped diff
 + rollback/evidence/claim boundary
 + receipt
+```
+
+Each row also records:
+
+```text
+vm_snapshot_hash
+materialization_hash
+generated_files[]
 ```
 
 ## Latest Run

@@ -88,6 +88,30 @@ harness: Codex repair prompt with allowed files, visible probe, rollback, eviden
 
 Both modes are judged by the same external gate. The harness prompt does not get to self-admit.
 
+## VM-First File Generation
+
+Task files are generated through an in-process VM overlay before they touch disk:
+
+```text
+task spec
+-> VM write(path, content)
+-> VM snapshot hash
+-> materialize snapshot to disposable repo
+-> run probes on materialized backend
+```
+
+Receipts carry the VM identity:
+
+```json
+{
+  "vm_snapshot_hash": "...",
+  "materialization_hash": "...",
+  "generated_files": []
+}
+```
+
+Disk is the execution backend. The VM snapshot is the generation source.
+
 ## Why This Benchmark Exists
 
 The long-term benchmark should test broad Codex correctness, but the first step is a reproducible harness loop with strict evidence:
