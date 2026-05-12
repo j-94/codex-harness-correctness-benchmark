@@ -1,0 +1,94 @@
+{
+  "kind": "codex_harness_correctness_benchmark_run.v0",
+  "generated_at": "2026-05-12T17:24:42.595Z",
+  "carrier": "Agent OS Node REPL as control surface; Codex CLI as proposer; unittest/hidden probes as verifier",
+  "benchmark": "Codex Harness Correctness Benchmark mini-run",
+  "metric": "admitted_correct_patch_rate = visible_before_failed && codex_completed && visible_after_passed && hidden_probe_passed && scoped_diff && no_test_tamper && rollback/evidence/claim_boundary present",
+  "model": "gpt-5.4-mini via codex exec --ignore-user-config",
+  "rows": [
+    {
+      "task_id": "normalize_repeated_spaces",
+      "repo": "/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-f6Ir9Z",
+      "allowed_files": [
+        "strings.py"
+      ],
+      "changed_files": [
+        "M strings.py"
+      ],
+      "forbidden_changed_files": [
+        "M strings.py"
+      ],
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": false,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "admission": "shadow",
+      "timings_ms": {
+        "visible_before": 49,
+        "proposer": 18535,
+        "visible_after": 45,
+        "hidden": 24
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_repeated_inner_space (test_strings.StringTests.test_repeated_inner_space)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-f6Ir9Z/test_strings.py\", line 9, in test_repeated_inner_space\n    self.assertEqual(normalize_name('Grace   Hopper'), 'grace-hopper')\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'grace---hopper' != 'grace-hopper'\n- grace---hopper\n?      --\n+ grace-hopper\n\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/strings.py b/strings.py\nindex a66a07e..7631955 100644\n--- a/strings.py\n+++ b/strings.py\n@@ -1,2 +1,2 @@\n def normalize_name(name):\n-    return name.strip().lower().replace(' ', '-')\n+    return '-'.join(name.split()).lower()\n",
+      "codex_output_tail": "Changed files:\n- [strings.py](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-f6Ir9Z/strings.py)\n\nTest result:\n- `python3 -m unittest -q` passed\n- `Ran 2 tests in 0.000s`\n- `OK`\n\nRollback instruction:\n- Revert [strings.py](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-f6Ir9Z/strings.py) to `return name.strip().lower().replace(' ', '-')` if you need to undo the fix.\n"
+    },
+    {
+      "task_id": "clamp_upper_bound",
+      "repo": "/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-esQ8UN",
+      "allowed_files": [
+        "numbers.py"
+      ],
+      "changed_files": [
+        "M numbers.py"
+      ],
+      "forbidden_changed_files": [
+        "M numbers.py"
+      ],
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": false,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "admission": "shadow",
+      "timings_ms": {
+        "visible_before": 46,
+        "proposer": 13978,
+        "visible_after": 57,
+        "hidden": 23
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_above_range (test_numbers.NumberTests.test_above_range)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-esQ8UN/test_numbers.py\", line 9, in test_above_range\n    self.assertEqual(clamp(8, 0, 5), 5)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\nAssertionError: 8 != 5\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/numbers.py b/numbers.py\nindex 8abbcc2..68bdea1 100644\n--- a/numbers.py\n+++ b/numbers.py\n@@ -1,2 +1,2 @@\n def clamp(value, low, high):\n-    return max(value, low)\n+    return min(max(value, low), high)\n",
+      "codex_output_tail": "Changed file:\n- [`numbers.py`](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-esQ8UN/numbers.py)\n\nTest result:\n- `python3 -m unittest -q` passed\n- `Ran 3 tests in 0.000s`\n- `OK`\n\nRollback instruction:\n- Revert the edit in `numbers.py` by changing `return min(max(value, low), high)` back to the previous implementation, or run `git checkout -- numbers.py` if you want to discard just this file’s change.\n"
+    }
+  ],
+  "summary": {
+    "task_count": 2,
+    "canary_count": 0,
+    "admitted_correct_patch_rate": 0,
+    "visible_pass_rate": 1,
+    "hidden_pass_rate": 1,
+    "scoped_diff_rate": 0
+  },
+  "wall_ms": 32897,
+  "claim_boundary": "Evidence of one local mini-run over two disposable Python bug-fix tasks. This is not SWE-bench, production reliability, or broad Codex correctness.",
+  "next": "Scale to 20 generated tasks, then compare direct Codex vs REPL harness fanout 1/4/8 under the same admission gate.",
+  "receipt_hash": "37dfa450325563246a01adb34234bef8edcdeee19949eca85d14bed2a3edb0e0"
+}
