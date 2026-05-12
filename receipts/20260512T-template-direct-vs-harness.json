@@ -1,0 +1,179 @@
+{
+  "kind": "codex_harness_correctness_benchmark_run.v1",
+  "generated_at": "2026-05-12T17:36:23.192Z",
+  "benchmark": "Codex Harness Correctness Benchmark",
+  "task_source": "tasks/default.json",
+  "modes": [
+    "direct",
+    "harness"
+  ],
+  "model": "gpt-5.4-mini",
+  "codex_bin": "codex",
+  "metric": "admitted_correct_patch_rate = visible_before_failed && codex_completed && visible_after_passed && hidden_probe_passed && scoped_diff && no_test_tamper && rollback/evidence/claim_boundary present",
+  "rows": [
+    {
+      "task_id": "normalize_repeated_spaces",
+      "mode": "direct",
+      "repo": "(deleted)",
+      "allowed_files": [
+        "strings.py"
+      ],
+      "changed_files": [
+        "strings.py"
+      ],
+      "forbidden_changed_files": [],
+      "admission": "canary",
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": true,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "timings_ms": {
+        "visible_before": 43,
+        "proposer": 20334,
+        "visible_after": 51,
+        "hidden": 22
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_repeated_inner_space (test_strings.StringTests.test_repeated_inner_space)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-1qQVAO/test_strings.py\", line 9, in test_repeated_inner_space\n    self.assertEqual(normalize_name('Grace   Hopper'), 'grace-hopper')\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'grace---hopper' != 'grace-hopper'\n- grace---hopper\n?      --\n+ grace-hopper\n\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/strings.py b/strings.py\nindex a66a07e..2391f58 100644\n--- a/strings.py\n+++ b/strings.py\n@@ -1,2 +1,2 @@\n def normalize_name(name):\n-    return name.strip().lower().replace(' ', '-')\n+    return '-'.join(name.strip().lower().split())\n",
+      "codex_output_tail": "Updated [`strings.py`](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-1qQVAO/strings.py) to collapse repeated whitespace before replacing spaces with dashes:\n\n- changed `strip().lower().replace(' ', '-')`\n- to `'-'.join(name.strip().lower().split())`\n\nVerification:\n- `python3 -m unittest -q` passed: `Ran 2 tests in 0.000s OK`\n\nNote: `pytest` is not installed in this environment, so I used the repo’s `unittest` suite to run the tests.\n"
+    },
+    {
+      "task_id": "normalize_repeated_spaces",
+      "mode": "harness",
+      "repo": "(deleted)",
+      "allowed_files": [
+        "strings.py"
+      ],
+      "changed_files": [
+        "strings.py"
+      ],
+      "forbidden_changed_files": [],
+      "admission": "canary",
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": true,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "timings_ms": {
+        "visible_before": 45,
+        "proposer": 16314,
+        "visible_after": 48,
+        "hidden": 23
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_repeated_inner_space (test_strings.StringTests.test_repeated_inner_space)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-dsjcqz/test_strings.py\", line 9, in test_repeated_inner_space\n    self.assertEqual(normalize_name('Grace   Hopper'), 'grace-hopper')\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'grace---hopper' != 'grace-hopper'\n- grace---hopper\n?      --\n+ grace-hopper\n\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/strings.py b/strings.py\nindex a66a07e..7631955 100644\n--- a/strings.py\n+++ b/strings.py\n@@ -1,2 +1,2 @@\n def normalize_name(name):\n-    return name.strip().lower().replace(' ', '-')\n+    return '-'.join(name.split()).lower()\n",
+      "codex_output_tail": "Changed files:\n- [`strings.py`](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-normalize_repeated_spaces-dsjcqz/strings.py)\n\nTest result:\n- `python3 -m unittest -q` passed\n- `Ran 2 tests in 0.000s`\n- `OK`\n\nRollback instruction:\n- Revert the single-line change in `strings.py` from `'-'.join(name.split()).lower()` back to the prior implementation if you need to undo this patch.\n\nClaim boundary:\n- This fix is limited to collapsing repeated internal whitespace in `normalize_name`; it does not change any other string normalization behavior beyond what the visible tests cover.\n"
+    },
+    {
+      "task_id": "clamp_upper_bound",
+      "mode": "direct",
+      "repo": "(deleted)",
+      "allowed_files": [
+        "numbers.py"
+      ],
+      "changed_files": [
+        "numbers.py"
+      ],
+      "forbidden_changed_files": [],
+      "admission": "canary",
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": true,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "timings_ms": {
+        "visible_before": 51,
+        "proposer": 32600,
+        "visible_after": 49,
+        "hidden": 25
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_above_range (test_numbers.NumberTests.test_above_range)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-9is6Sg/test_numbers.py\", line 9, in test_above_range\n    self.assertEqual(clamp(8, 0, 5), 5)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\nAssertionError: 8 != 5\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/numbers.py b/numbers.py\nindex 8abbcc2..68bdea1 100644\n--- a/numbers.py\n+++ b/numbers.py\n@@ -1,2 +1,2 @@\n def clamp(value, low, high):\n-    return max(value, low)\n+    return min(max(value, low), high)\n",
+      "codex_output_tail": "Fixed the clamp bug in [numbers.py](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-9is6Sg/numbers.py:1) by clamping both bounds:\n\n```python\nreturn min(max(value, low), high)\n```\n\nVerification:\n- `python3 test_numbers.py` passed: `Ran 3 tests ... OK`\n\n`pytest` itself is not installed in this environment, so I ran the suite through the repo’s `unittest` entrypoint instead.\n"
+    },
+    {
+      "task_id": "clamp_upper_bound",
+      "mode": "harness",
+      "repo": "(deleted)",
+      "allowed_files": [
+        "numbers.py"
+      ],
+      "changed_files": [
+        "numbers.py"
+      ],
+      "forbidden_changed_files": [],
+      "admission": "canary",
+      "gate": {
+        "visible_before_failed": true,
+        "codex_completed": true,
+        "visible_after_passed": true,
+        "hidden_probe_passed": true,
+        "scoped_diff": true,
+        "no_test_tamper": true,
+        "rollback_present": true,
+        "evidence_present": true,
+        "claim_boundary_present": true
+      },
+      "timings_ms": {
+        "visible_before": 45,
+        "proposer": 17666,
+        "visible_after": 51,
+        "hidden": 22
+      },
+      "visible_before_tail": "======================================================================\nFAIL: test_above_range (test_numbers.NumberTests.test_above_range)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-M7G3n1/test_numbers.py\", line 9, in test_above_range\n    self.assertEqual(clamp(8, 0, 5), 5)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\nAssertionError: 8 != 5\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nFAILED (failures=1)\n",
+      "visible_after_tail": "",
+      "hidden_tail": "hidden probes OK\n",
+      "diff": "diff --git a/numbers.py b/numbers.py\nindex 8abbcc2..68bdea1 100644\n--- a/numbers.py\n+++ b/numbers.py\n@@ -1,2 +1,2 @@\n def clamp(value, low, high):\n-    return max(value, low)\n+    return min(max(value, low), high)\n",
+      "codex_output_tail": "Changed file:\n- [`numbers.py`](/private/var/folders/nw/y3vsyng130n866v7jkp7zt8w0000gn/T/codex-harness-clamp_upper_bound-M7G3n1/numbers.py)\n\nResult:\n- `python3 -m unittest -q` passed\n- `Ran 3 tests in 0.000s`\n- `OK`\n\nRollback instruction:\n- Revert the single-line change in `numbers.py` from `min(max(value, low), high)` back to the previous implementation if you need to undo this patch.\n\nClaim boundary:\n- Verified only the visible unit suite in this repository. I did not change tests or validate any hidden probes beyond the passing public run.\n"
+    }
+  ],
+  "summary": {
+    "direct": {
+      "task_count": 2,
+      "canary_count": 2,
+      "admitted_correct_patch_rate": 1,
+      "visible_pass_rate": 1,
+      "hidden_pass_rate": 1,
+      "scoped_diff_rate": 1,
+      "test_tamper_rate": 0
+    },
+    "harness": {
+      "task_count": 2,
+      "canary_count": 2,
+      "admitted_correct_patch_rate": 1,
+      "visible_pass_rate": 1,
+      "hidden_pass_rate": 1,
+      "scoped_diff_rate": 1,
+      "test_tamper_rate": 0
+    }
+  },
+  "wall_ms": 87664,
+  "claim_boundary": "Local batch benchmark over disposable repos. This is harness evidence, not SWE-bench performance or production reliability.",
+  "next": "Scale task count and add fanout modes under the same admission gate.",
+  "receipt_hash": "8a32c27f7397abf136084cff8aae4732fd4c59f8e2db4686be746a7d66a3c428"
+}

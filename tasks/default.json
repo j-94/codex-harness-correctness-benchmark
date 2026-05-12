@@ -1,0 +1,27 @@
+{
+  "kind": "codex_harness_task_batch.v0",
+  "tasks": [
+    {
+      "id": "normalize_repeated_spaces",
+      "files": {
+        "strings.py": "def normalize_name(name):\n    return name.strip().lower().replace(' ', '-')\n",
+        "test_strings.py": "import unittest\nfrom strings import normalize_name\n\nclass StringTests(unittest.TestCase):\n    def test_outer_space(self):\n        self.assertEqual(normalize_name('  Ada Lovelace  '), 'ada-lovelace')\n\n    def test_repeated_inner_space(self):\n        self.assertEqual(normalize_name('Grace   Hopper'), 'grace-hopper')\n\nif __name__ == '__main__':\n    unittest.main()\n"
+      },
+      "allowed_files": ["strings.py"],
+      "visible_probe": "python3 -m unittest -q",
+      "hidden_probe": "from strings import normalize_name\nassert normalize_name('  Alan    Turing ') == 'alan-turing'\nassert normalize_name('Katherine Johnson') == 'katherine-johnson'\nassert normalize_name('single') == 'single'\nprint('hidden probes OK')\n",
+      "claim_boundary": "String normalization bug fix in a disposable Python repo."
+    },
+    {
+      "id": "clamp_upper_bound",
+      "files": {
+        "numbers.py": "def clamp(value, low, high):\n    return max(value, low)\n",
+        "test_numbers.py": "import unittest\nfrom numbers import clamp\n\nclass NumberTests(unittest.TestCase):\n    def test_below_range(self):\n        self.assertEqual(clamp(-2, 0, 5), 0)\n\n    def test_above_range(self):\n        self.assertEqual(clamp(8, 0, 5), 5)\n\n    def test_inside_range(self):\n        self.assertEqual(clamp(3, 0, 5), 3)\n\nif __name__ == '__main__':\n    unittest.main()\n"
+      },
+      "allowed_files": ["numbers.py"],
+      "visible_probe": "python3 -m unittest -q",
+      "hidden_probe": "from numbers import clamp\nassert clamp(100, 10, 20) == 20\nassert clamp(5, 10, 20) == 10\nassert clamp(15, 10, 20) == 15\nprint('hidden probes OK')\n",
+      "claim_boundary": "Numeric clamp bug fix in a disposable Python repo."
+    }
+  ]
+}

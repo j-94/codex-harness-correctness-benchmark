@@ -1,0 +1,15 @@
+{
+  "name": "codex-harness-correctness-benchmark",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Batchable benchmark harness for direct-vs-harness Codex correctness checks.",
+  "bin": {
+    "codex-harness-bench": "scripts/main.js"
+  },
+  "scripts": {
+    "bench": "node scripts/main.js",
+    "bench:compare": "node scripts/main.js --modes direct,harness",
+    "check": "node --check scripts/main.js && node --check scripts/run-mini-benchmark.js"
+  },
+  "license": "MIT"
+}

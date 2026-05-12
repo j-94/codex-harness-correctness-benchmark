@@ -13,9 +13,19 @@ retrieve/select context
 -> preserve resumable receipts
 ```
 
-## Current Mini-Run
+## Batchable Harness
 
-The current run uses two disposable Python repositories.
+The main runner is:
+
+```bash
+node scripts/main.js --modes direct,harness --out receipts/local-run.json
+```
+
+It runs every selected task against each selected mode, then emits one receipt with rows and aggregate metrics.
+
+## Current Default Batch
+
+The default batch uses two disposable Python repositories.
 
 ### Task 1: `normalize_repeated_spaces`
 
@@ -66,6 +76,17 @@ A row is admitted only when all checks pass:
   "claim_boundary_present": true
 }
 ```
+
+## Direct vs Harness Comparison
+
+The benchmark compares:
+
+```text
+direct:  plain Codex repair prompt
+harness: Codex repair prompt with allowed files, visible probe, rollback, evidence, and claim-boundary constraints
+```
+
+Both modes are judged by the same external gate. The harness prompt does not get to self-admit.
 
 ## Why This Benchmark Exists
 
