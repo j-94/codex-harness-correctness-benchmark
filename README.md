@@ -8,6 +8,13 @@ It captures a live benchmark for the capability we actually want to test:
 Codex as a packet-switched correctness harness
 ```
 
+It is also the remote-backed place to describe how the local `codex-clean`
+harness should work with an Agent OS / UTIR carrier. `codex-clean` is the
+boot/recovery surface: it holds instructions, compact state, receipts, and
+claim boundaries. Agent OS / UTIR is the execution carrier: it turns a selected
+intent into a typed operation tape before files, shell commands, git, or remote
+updates are used as backends.
+
 The benchmark is not a claim that Codex broadly solves SWE-bench. It is a batchable harness for this loop:
 
 ```text
@@ -22,6 +29,84 @@ task packet
 -> admission decision
 -> receipt
 ```
+
+## Codex-Clean Harness Symbiosis
+
+The intended operating relationship is:
+
+```text
+codex-clean boot state
+-> compact recovered ControlState / claim boundary
+-> Agent OS REPL or TP(...)
+-> WorkManifest / ControlPacket
+-> UTIR-style op tape
+-> gate: rollback + evidence + claim_boundary + path/tool scope
+-> disposable backend effect
+-> persisted receipt
+-> codex-clean carries only the receipt-backed state forward
+```
+
+`codex-clean` should not be treated as a giant preloaded memory blob that makes
+new strategic or filesystem claims true by itself. Its job is to route, recover,
+and bound claims. Material effects should be selected by the typed op tape and
+admitted by the gate.
+
+Forbidden control path:
+
+```text
+preloaded instruction / chat intent
+-> Codex decides files or git are useful
+-> direct filesystem, shell, or remote mutation
+```
+
+Required control path:
+
+```text
+intent
+-> recovered state
+-> typed packet / UTIR op tape
+-> gate and receipt preview
+-> scoped backend materialization
+```
+
+Until a mechanical effect proxy exists, this is protocol-level governance. The
+benchmark therefore records the control path, generated files, scoped diff,
+rollback/evidence/claim-boundary fields, and receipt hash so later runs can
+separate "the harness actually governed the work" from "the prompt merely said
+it should."
+
+## Capability Accuracy Program
+
+The same pattern should be used for every capability claim, not only code
+repair. Each claimed capability needs a paired same-model comparison:
+
+```text
+same model
+same task
+same budget
+same allowed backends
+
+A. direct Codex
+B. controlled Codex through recovered state + typed op tape + gate + receipt
+```
+
+Claim lanes to add as task batches:
+
+```text
+retrieval learned tensors: route/evidence-handle accuracy
+long context: preserved-action score per token
+patch planning: right-file targeting, rollback, test plan
+effect safety: unsafe-admit block rate
+claim calibration: overclaim reduction
+memory carry: next-turn state recovery
+cognitive debt: teach-back / explanation accuracy
+tool routing: wrong-surface rate
+compression: compact packet preserves next action
+execution: admitted result rate
+```
+
+A claim is promotable only when the controlled path beats or matches the direct
+path on paired tasks and the receipt preserves failures, boundaries, and cost.
 
 ## Quick Start
 

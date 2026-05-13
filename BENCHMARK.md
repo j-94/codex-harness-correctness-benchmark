@@ -13,6 +13,22 @@ retrieve/select context
 -> preserve resumable receipts
 ```
 
+For the larger Codex harness, this means `codex-clean` and Agent OS / UTIR have
+separate jobs:
+
+```text
+codex-clean = boot/recovery/claim-boundary surface
+Agent OS / TP = live control carrier
+UTIR op tape = typed execution plan
+filesystem/shell/git = backend materializers
+receipt = carry-forward state
+```
+
+The benchmark should measure that separation. A run should not count as
+"harness controlled" merely because the prompt asked Codex to be careful. It
+counts only when the receipt shows a typed packet or equivalent op tape, the
+selected backend effects, and the gate fields that made the effects admissible.
+
 ## Batchable Harness
 
 The main runner is:
@@ -87,6 +103,53 @@ harness: Codex repair prompt with allowed files, visible probe, rollback, eviden
 ```
 
 Both modes are judged by the same external gate. The harness prompt does not get to self-admit.
+
+For future claim lanes, keep the same paired design:
+
+```text
+same_model
+same_task
+same_budget
+same_allowed_backends
+direct_mode
+controlled_mode
+same_external_scorer
+```
+
+The controlled mode may use recovered state, learned routes, compact packets,
+UTIR op tapes, and gates. The direct mode may use only the ordinary task prompt
+and the same backend budget. This prevents a claim from being upgraded just
+because the controlled path had more context, tools, or time.
+
+## Claim-Lane Matrix
+
+Use separate task batches for each capability claim:
+
+| Lane | Direct baseline | Controlled path | Primary score |
+| --- | --- | --- | --- |
+| Retrieval learned tensors | model chooses retrieval from prompt | tensor route selects surface before answer | route accuracy, evidence-handle accuracy |
+| Long context | model receives long context | compact packet plus selected receipts | preserved-action score per token |
+| Patch planning | freeform plan | patch-card / op tape | right-file targeting, rollback, tests |
+| Effect safety | direct write/tool request | gate/admission/hold | unsafe-admit block rate |
+| Claim calibration | normal answer | answer-card with boundary | overclaim rate |
+| Memory carry | chat context | receipt-chain recovery | next-turn state recovery |
+| Cognitive debt | accept generated output | teach-back / explanation gate | explanation accuracy |
+| Tool routing | model chooses tools freely | typed route/control packet | wrong-surface rate |
+| Compression | raw transcript | compact state packet | preserved next action |
+| Execution | direct patch/run | op tape -> gate -> executor | admitted result rate |
+
+Promotion rule:
+
+```text
+claim_supported =
+  paired_same_model
+  && controlled_score >= direct_score
+  && receipt_has_failures
+  && receipt_has_cost
+  && receipt_has_claim_boundary
+```
+
+If any field is missing, the result remains hypothesis or canary only.
 
 ## VM-First File Generation
 
